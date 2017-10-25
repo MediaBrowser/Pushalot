@@ -40,7 +40,7 @@ namespace MediaBrowser.Plugins.PushALotNotifications
             get { return Plugin.Instance.Name; }
         }
 
-        public Task SendNotification(UserNotification request, CancellationToken cancellationToken)
+        public async Task SendNotification(UserNotification request, CancellationToken cancellationToken)
         {
             var options = GetOptions(request.User);
 
@@ -61,7 +61,18 @@ namespace MediaBrowser.Plugins.PushALotNotifications
 
             _logger.Debug("PushAlot to {0}", options.Token);
 
-            return _httpClient.Post("https://pushalot.com/api/sendmessage", parameters, cancellationToken);
+            var httpRequestOptions = new HttpRequestOptions
+            {
+                Url = "https://pushalot.com/api/sendmessage",
+                CancellationToken = cancellationToken
+            };
+
+            httpRequestOptions.SetPostData(parameters);
+
+            using (await _httpClient.Post(httpRequestOptions).ConfigureAwait(false))
+            {
+
+            }
         }
 
         private bool IsValid(PushALotOptions options)
