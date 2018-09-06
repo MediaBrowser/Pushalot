@@ -6,13 +6,15 @@ using MediaBrowser.Model.Plugins;
 using MediaBrowser.Model.Serialization;
 using MediaBrowser.Plugins.PushALotNotifications.Api;
 using MediaBrowser.Plugins.PushALotNotifications.Configuration;
+using System.IO;
+using MediaBrowser.Model.Drawing;
 
 namespace MediaBrowser.Plugins.PushALotNotifications
 {
     /// <summary>
     /// Class Plugin
     /// </summary>
-    public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
+    public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages, IHasThumbImage
     {
         public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer)
             : base(applicationPaths, xmlSerializer)
@@ -36,6 +38,20 @@ namespace MediaBrowser.Plugins.PushALotNotifications
         public override Guid Id
         {
             get { return _id; }
+        }
+
+        public Stream GetThumbImage()
+        {
+            var type = GetType();
+            return type.Assembly.GetManifestResourceStream(type.Namespace + ".thumb.png");
+        }
+
+        public ImageFormat ThumbImageFormat
+        {
+            get
+            {
+                return ImageFormat.Png;
+            }
         }
 
         /// <summary>
